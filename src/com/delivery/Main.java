@@ -9,7 +9,7 @@ import src.com.delivery.payment.Pagamento;
 import src.com.delivery.payment.PagamentoCartao;
 import src.com.delivery.payment.PagamentoPix;
 import src.com.delivery.payment.PagamentoDinheiro;
-import src.com.delivery.payment.PagamentoService;
+import src.com.delivery.service.PagamentoService;
 
 public class Main {
 

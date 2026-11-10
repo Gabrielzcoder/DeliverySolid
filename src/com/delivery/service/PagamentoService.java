@@ -1,4 +1,6 @@
-package src.com.delivery.payment;
+package src.com.delivery.service;
+
+import src.com.delivery.payment.Pagamento;
 
 public class PagamentoService {
 
