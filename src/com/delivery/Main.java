@@ -5,6 +5,12 @@ import src.com.delivery.repository.PedidoRepositoryMemoria;
 import src.com.delivery.service.PedidoService;
 import src.com.delivery.service.PedidoExibicaoService;
 
+import src.com.delivery.payment.Pagamento;
+import src.com.delivery.payment.PagamentoCartao;
+import src.com.delivery.payment.PagamentoPix;
+import src.com.delivery.payment.PagamentoDinheiro;
+import src.com.delivery.payment.PagamentoService;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -13,13 +19,15 @@ public class Main {
         PedidoRepositoryMemoria repository =
                 new PedidoRepositoryMemoria();
 
-        // Inicializando o serviço de pedidos
+        // Inicializando os serviços
         PedidoService pedidoService =
                 new PedidoService(repository);
 
-        // Inicializando o serviço de exibição
         PedidoExibicaoService exibicaoService =
                 new PedidoExibicaoService();
+
+        PagamentoService pagamentoService =
+                new PagamentoService();
 
         // Criando um pedido
         Pedido pedido = pedidoService.criarPedido(
@@ -29,7 +37,26 @@ public class Main {
                 49.90
         );
 
-        // Exibindo as informações
+        // Exibindo o pedido
         exibicaoService.exibirPedido(pedido);
+
+        // Testando formas de pagamento
+        System.out.println("\n===== FORMAS DE PAGAMENTO =====");
+
+        Pagamento cartao = new PagamentoCartao();
+        Pagamento pix = new PagamentoPix();
+        Pagamento dinheiro = new PagamentoDinheiro();
+
+        pagamentoService.realizarPagamento(
+                cartao, pedido.getValor()
+        );
+
+        pagamentoService.realizarPagamento(
+                pix, pedido.getValor()
+        );
+
+        pagamentoService.realizarPagamento(
+                dinheiro, pedido.getValor()
+        );
     }
 }
