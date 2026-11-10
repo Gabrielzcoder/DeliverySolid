@@ -3,8 +3,10 @@ package src.com.delivery;
 import src.com.delivery.interfaces.GeradorRelatorios;
 import src.com.delivery.interfaces.GerenciadorEntregas;
 import src.com.delivery.interfaces.GerenciadorPedidos;
-import src.com.delivery.interfaces.Notificador;
 import src.com.delivery.model.Pedido;
+import src.com.delivery.notification.EmailNotificador;
+import src.com.delivery.notification.SMSNotificador;
+import src.com.delivery.notification.WhatsAppNotificador;
 import src.com.delivery.payment.PagamentoCartao;
 import src.com.delivery.payment.PagamentoDinheiro;
 import src.com.delivery.payment.PagamentoPix;
@@ -46,11 +48,25 @@ public class Main {
         System.out.println("\n===== SERVIÇOS DO PEDIDO =====");
 
         GerenciadorEntregas entregas = new EntregaService();
-        Notificador notificacoes = new NotificacaoService();
         GeradorRelatorios relatorios = new RelatorioService();
 
         entregas.realizarEntrega(pedido);
-        notificacoes.enviarNotificacao(pedido);
         relatorios.gerarRelatorio(pedido);
+
+        // DIP - Notificações desacopladas
+        System.out.println("\n===== NOTIFICAÇÕES =====");
+
+        NotificacaoService emailService =
+                new NotificacaoService(new EmailNotificador());
+
+        NotificacaoService smsService =
+                new NotificacaoService(new SMSNotificador());
+
+        NotificacaoService whatsappService =
+                new NotificacaoService(new WhatsAppNotificador());
+
+        emailService.notificar(pedido);
+        smsService.notificar(pedido);
+        whatsappService.notificar(pedido);
     }
 }
