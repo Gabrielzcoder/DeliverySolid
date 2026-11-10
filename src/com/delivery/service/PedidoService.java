@@ -1,19 +1,19 @@
 package src.com.delivery.service;
 
+import src.com.delivery.interfaces.GerenciadorPedidos;
 import src.com.delivery.model.Pedido;
 import src.com.delivery.repository.PedidoRepository;
 
-public class PedidoService {
+public class PedidoService implements GerenciadorPedidos {
 
-    private PedidoRepository repository;
+    private final PedidoRepository repository;
 
     public PedidoService(PedidoRepository repository) {
         this.repository = repository;
     }
 
-    public Pedido criarPedido(int id, String nomeCliente,
-                              String produto, double valor) {
-
+    @Override
+    public Pedido criarPedido(int id, String nomeCliente, String produto, double valor) {
         Pedido pedido = new Pedido(id, nomeCliente, produto, valor);
 
         repository.salvar(pedido);

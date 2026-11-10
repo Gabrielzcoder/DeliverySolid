@@ -1,62 +1,56 @@
 package src.com.delivery;
 
+import src.com.delivery.interfaces.GeradorRelatorios;
+import src.com.delivery.interfaces.GerenciadorEntregas;
+import src.com.delivery.interfaces.GerenciadorPedidos;
+import src.com.delivery.interfaces.Notificador;
 import src.com.delivery.model.Pedido;
-import src.com.delivery.repository.PedidoRepositoryMemoria;
-import src.com.delivery.service.PedidoService;
-import src.com.delivery.service.PedidoExibicaoService;
-
-import src.com.delivery.payment.Pagamento;
 import src.com.delivery.payment.PagamentoCartao;
-import src.com.delivery.payment.PagamentoPix;
 import src.com.delivery.payment.PagamentoDinheiro;
+import src.com.delivery.payment.PagamentoPix;
+import src.com.delivery.repository.PedidoRepository;
+import src.com.delivery.repository.PedidoRepositoryMemoria;
+import src.com.delivery.service.EntregaService;
+import src.com.delivery.service.NotificacaoService;
 import src.com.delivery.service.PagamentoService;
+import src.com.delivery.service.PedidoExibicaoService;
+import src.com.delivery.service.PedidoService;
+import src.com.delivery.service.RelatorioService;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // Inicializando o armazenamento
-        PedidoRepositoryMemoria repository =
-                new PedidoRepositoryMemoria();
+        // SRP - Criação e exibição de pedidos
+        PedidoRepository repository = new PedidoRepositoryMemoria();
 
-        // Inicializando os serviços
-        PedidoService pedidoService =
-                new PedidoService(repository);
+        GerenciadorPedidos pedidos = new PedidoService(repository);
+        PedidoExibicaoService exibicao = new PedidoExibicaoService();
 
-        PedidoExibicaoService exibicaoService =
-                new PedidoExibicaoService();
-
-        PagamentoService pagamentoService =
-                new PagamentoService();
-
-        // Criando um pedido
-        Pedido pedido = pedidoService.criarPedido(
-                1,
-                "Gabriel",
-                "Pizza de Calabresa",
-                49.90
+        Pedido pedido = pedidos.criarPedido(
+                1, "Gabriel", "Pizza de Calabresa", 49.90
         );
 
-        // Exibindo o pedido
-        exibicaoService.exibirPedido(pedido);
+        exibicao.exibirPedido(pedido);
 
-        // Testando formas de pagamento
-        System.out.println("\n===== FORMAS DE PAGAMENTO =====");
+        // OCP - Diferentes formas de pagamento
+        System.out.println("\n===== PAGAMENTOS =====");
 
-        Pagamento cartao = new PagamentoCartao();
-        Pagamento pix = new PagamentoPix();
-        Pagamento dinheiro = new PagamentoDinheiro();
+        PagamentoService pagamentoService = new PagamentoService();
 
-        pagamentoService.realizarPagamento(
-                cartao, pedido.getValor()
-        );
+        pagamentoService.realizarPagamento(new PagamentoCartao(), 49.90);
+        pagamentoService.realizarPagamento(new PagamentoPix(), 49.90);
+        pagamentoService.realizarPagamento(new PagamentoDinheiro(), 49.90);
 
-        pagamentoService.realizarPagamento(
-                pix, pedido.getValor()
-        );
+        // ISP - Interfaces segregadas
+        System.out.println("\n===== SERVIÇOS DO PEDIDO =====");
 
-        pagamentoService.realizarPagamento(
-                dinheiro, pedido.getValor()
-        );
+        GerenciadorEntregas entregas = new EntregaService();
+        Notificador notificacoes = new NotificacaoService();
+        GeradorRelatorios relatorios = new RelatorioService();
+
+        entregas.realizarEntrega(pedido);
+        notificacoes.enviarNotificacao(pedido);
+        relatorios.gerarRelatorio(pedido);
     }
 }
